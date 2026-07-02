@@ -1,0 +1,55 @@
+{% extends 'list_generic.html' %}
+
+
+{% block titulo %}
+{{titulo}}
+{% endblock titulo %}
+
+{% block subtitulo %}
+{{subtitulo}}
+{% endblock subtitulo%}
+
+{%block exportar%}
+<a href="{% url 'app:reporte_inventario_pdf' %}" class="btn-pdf">
+    <i class="fas fa-file-pdf me-1"></i> Exportar a PDF
+</a>
+<a href="{% url 'app:reporte_inventario_excel' %}" class="btn-excel">
+    <i class="fas fa-file-excel me-1"></i> Exportar a Excel
+</a>
+{% endblock exportar %}
+
+
+
+
+{% block columns %}
+     <tr>
+                    <th><i class="fas fa-hashtag me-2"></i>ID</th>
+                    <th><i class="fas fa-box me-2"></i>Nombre</th>
+                    <th><i class="fas fa-box me-2"></i>Marca</th>
+                    <th><i class="fas fa-warehouse me-2"></i>Categoría</th>
+                    <th><i class="fas fa-chart-line me-2"></i>Stock</th>
+                    <th><i class="fas fa-chart-line me-2"></i>Ubicación</th>
+                    <th class="text-center"><i class="fas fa-tools me-2"></i>Acciones</th>
+                </tr>
+{% endblock columns %}
+
+{% block rows %}
+    {% for elemento in object_list %}
+    <tr>
+        <td>{{ elemento.id }}</td>
+        <td>{{ elemento.nombre }}</td>
+        <td>{{ elemento.marcaId }}</td>
+        <td>{{ elemento.categoriaId }}</td>
+        <td>{{ elemento.stockActual }}</td>
+        <td>{{ elemento.ubicacion }}</td>
+        <td class="text-center">
+            <a href="{% url 'app:editar_elemento' elemento.id %}" class="btn btn-sm me-1" style="background-color: #3054f7; color: #ffffff; border-radius: 8px;">
+                            <i class="fa-solid fa-pen-to-square"></i>
+            </a>
+            <a href="{% url 'app:eliminar_elemento' elemento.id %}" class="btn btn-sm" style="background-color: #ff4d4d; color: white; border-radius: 8px;">
+                            <i class="fa-solid fa-trash"></i>
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+{% endblock rows %}

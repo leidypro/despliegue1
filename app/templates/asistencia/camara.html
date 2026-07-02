@@ -1,0 +1,84 @@
+{% extends 'body.html' %} {% load static %} {% block main %}
+<div class="contenedor-qr">
+  <h2>Escanear Asistencia</h2>
+  <div id="reader"></div>
+</div>
+{% endblock %} {% block js %}
+
+<script src="{% static 'Js/html5-qrcode.min.js' %}"></script>
+
+<script>
+  function getCookie(name) {
+    let cookieValue = null;
+
+    if (document.cookie && document.cookie !== "") {
+      const cookies = document.cookie.split(";");
+
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+
+        if (cookie.substring(0, name.length + 1) === name + "=") {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+  document.addEventListener("DOMContentLoaded", function () {
+    console.log("SCRIPT CARGADO");
+
+    function onScanSuccess(decodedText) {
+      fetch("/ejemplo/registrar_asistencia/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": "{{csrf_token}}",
+        },
+        body: JSON.stringify({
+          codigo: decodedText,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.status === "ok") {
+            alert("Estudiante " + data.mensaje);
+          } else {
+            alert(data.mensaje);
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    }
+
+    const scanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+
+    scanner.render(onScanSuccess);
+  });
+</script>
+<style>
+  .contenedor-qr {
+    width: 420px;
+    margin: 60px auto;
+    padding: 25px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+    text-align: center;
+  }
+
+  .contenedor-qr h2 {
+    margin-bottom: 20px;
+    color: #333;
+  }
+
+  #reader {
+    width: 100%;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 10px;
+  }
+</style>
+{% endblock %}

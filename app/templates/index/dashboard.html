@@ -1,0 +1,275 @@
+{% extends 'body.html' %}
+{% load static %}
+
+{% block main %}
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <div class="container-fluid mt-4">
+    <!-- TÍTULO -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <h4 class="fw-bold">Panel de control</h4>
+        <p class="text-muted mb-0">Acciones disponibles según tu rol</p>
+      </div>
+    </div>
+
+    <!-- TARJETAS -->
+    <div class="row">
+      <!-- ================= ADMINISTRADOR ================= -->
+      {% if usuario_rol == 'Administrador' %}
+        <div class="col-md-3 mb-4">
+          <a href="#" class="text-decoration-none text-dark">
+            <div class="card dashboard-card h-100 border-0 shadow-sm">
+              <div class="card-body text-center">
+                <i class="fa-solid fa-users dashboard-icon text-primary"></i>
+                <h6 class="fw-bold">Gestión de usuarios</h6>
+                <p class="text-muted small">Crear, editar y administrar usuarios</p>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-md-3 mb-4">
+          <a href="#" class="text-decoration-none text-dark">
+            <div class="card dashboard-card h-100 border-0 shadow-sm">
+              <div class="card-body text-center">
+                <i class="fa-solid fa-chalkboard-user dashboard-icon text-success"></i>
+                <h6 class="fw-bold">Gestión de docentes</h6>
+                <p class="text-muted small">Control del personal académico</p>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-md-3 mb-4">
+          <a href="#" class="text-decoration-none text-dark">
+            <div class="card dashboard-card h-100 border-0 shadow-sm">
+              <div class="card-body text-center">
+                <i class="fa-solid fa-user-graduate dashboard-icon text-warning"></i>
+                <h6 class="fw-bold">Gestión de estudiantes</h6>
+                <p class="text-muted small">Matrículas y seguimiento</p>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-md-3 mb-4">
+          <a href="#" class="text-decoration-none text-dark">
+            <div class="card dashboard-card h-100 border-0 shadow-sm">
+              <div class="card-body text-center">
+                <i class="fa-solid fa-chart-line dashboard-icon text-dark"></i>
+                <h6 class="fw-bold">Reportes</h6>
+                <p class="text-muted small">Estadísticas del sistema</p>
+              </div>
+            </div>
+          </a>
+        </div>
+      {% endif %}
+
+      <!-- ================= DOCENTE ================= -->
+      {% if usuario_rol == 'Docente' %}
+        <div class="col-md-4 mb-4">
+          <a href="{% url 'mis_grupos' %}" class="text-decoration-none text-dark">
+            <div class="card dashboard-card h-100 border-0 shadow-sm">
+              <div class="card-body text-center">
+                <i class="fa-solid fa-layer-group dashboard-icon text-success"></i>
+                <h6 class="fw-bold">Mis grupos</h6>
+                <p class="text-muted small">Grupos y estudiantes asignados</p>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-md-4 mb-4">
+          <a href="{% url 'registro_notas' %}" class="text-decoration-none text-dark">
+            <div class="card dashboard-card h-100 border-0 shadow-sm">
+              <div class="card-body text-center">
+                <i class="fa-solid fa-pen-to-square dashboard-icon text-primary"></i>
+                <h6 class="fw-bold">Registro de notas</h6>
+                <p class="text-muted small">Evaluación académica</p>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-md-4 mb-4">
+          <a href="{% url 'asistencia_docente' %}" class="text-decoration-none text-dark">
+            <div class="card dashboard-card h-100 border-0 shadow-sm">
+              <div class="card-body text-center">
+                <i class="fa-solid fa-calendar-check dashboard-icon text-warning"></i>
+                <h6 class="fw-bold">Asistencia</h6>
+                <p class="text-muted small">Control de asistencia</p>
+              </div>
+            </div>
+          </a>
+        </div>
+      {% endif %}
+
+      <!-- ================= ESTUDIANTE ================= -->
+      {% if usuario_rol == 'Estudiante' %}
+        <div class="col-md-4 mb-4">
+          <a href="{% url 'mis_notas' %}" class="text-decoration-none text-dark">
+            <div class="card dashboard-card h-100 border-0 shadow-sm">
+              <div class="card-body text-center">
+                <i class="fa-solid fa-graduation-cap dashboard-icon text-primary"></i>
+                <h6 class="fw-bold">Mis notas</h6>
+                <p class="text-muted small">Consulta académica</p>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-md-4 mb-4">
+          <a href="{% url 'mi_asistencia' %}" class="text-decoration-none text-dark">
+            <div class="card dashboard-card h-100 border-0 shadow-sm">
+              <div class="card-body text-center">
+                <i class="fa-solid fa-clipboard-check dashboard-icon text-success"></i>
+                <h6 class="fw-bold">Mi asistencia</h6>
+                <p class="text-muted small">Historial de asistencia</p>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-md-4 mb-4">
+          <a href="{% url 'mi_perfil' %}" class="text-decoration-none text-dark">
+            <div class="card dashboard-card h-100 border-0 shadow-sm">
+              <div class="card-body text-center">
+                <i class="fa-solid fa-user dashboard-icon text-secondary"></i>
+                <h6 class="fw-bold">Mi perfil</h6>
+                <p class="text-muted small">Información personal</p>
+              </div>
+            </div>
+          </a>
+        </div>
+      {% endif %}
+
+      <!-- ================= ACUDIENTE ================= -->
+      {% if usuario_rol == 'Acudiente' %}
+        <div class="col-md-6 mb-4">
+          <a href="{% url 'seguimiento_estudiante' %}" class="text-decoration-none text-dark">
+            <div class="card dashboard-card h-100 border-0 shadow-sm">
+              <div class="card-body text-center">
+                <i class="fa-solid fa-eye dashboard-icon text-primary"></i>
+                <h6 class="fw-bold">Seguimiento académico</h6>
+                <p class="text-muted small">Rendimiento y asistencia</p>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-md-6 mb-4">
+          <a href="{% url 'comunicados' %}" class="text-decoration-none text-dark">
+            <div class="card dashboard-card h-100 border-0 shadow-sm">
+              <div class="card-body text-center">
+                <i class="fa-solid fa-bullhorn dashboard-icon text-secondary"></i>
+                <h6 class="fw-bold">Comunicados</h6>
+                <p class="text-muted small">Avisos institucionales</p>
+              </div>
+            </div>
+          </a>
+        </div>
+      {% endif %}
+    </div>
+    {% if usuario_rol == 'Administrador' or usuario_rol == 'Docente' %}
+      <hr class="my-4" />
+
+      <div class="row">
+        <div class="col-12 mb-3">
+          <h5 class="fw-bold">Indicadores del sistema</h5>
+          <p class="text-muted mb-0">Resumen visual de asistencias, inventario y estado general</p>
+        </div>
+
+        <!-- ASISTENCIAS -->
+        <div class="col-md-6 mb-4">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+              <h6 class="fw-bold mb-3">
+                <i class="fa-solid fa-calendar-check text-primary me-2"></i>
+                Asistencias
+              </h6>
+              <div id="graficaAsistencias"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- INVENTARIO -->
+        <div class="col-md-6 mb-4">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+              <h6 class="fw-bold mb-3">
+                <i class="fa-solid fa-boxes-stacked text-success me-2"></i>
+                Inventario
+              </h6>
+              <div id="graficaInventario"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ESTADO GENERAL -->
+        <div class="col-md-6 mb-4">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+              <h6 class="fw-bold mb-3">
+                <i class="fa-solid fa-chart-pie text-warning me-2"></i>
+                Estado general
+              </h6>
+              <div id="graficaEstado"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+  <script>
+    /* ================= ASISTENCIAS ================= */
+    new ApexCharts(document.querySelector('#graficaAsistencias'), {
+      chart: {
+        type: 'line',
+        height: 250,
+        toolbar: { show: false }
+      },
+      series: [
+        {
+          name: 'Asistencias',
+          data: [22, 28, 30, 35, 40]
+        }
+      ],
+      xaxis: {
+        categories: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie']
+      },
+      stroke: { curve: 'smooth' },
+      colors: ['#0d6efd']
+    }).render()
+    
+    /* ================= INVENTARIO ================= */
+    new ApexCharts(document.querySelector('#graficaInventario'), {
+      chart: {
+        type: 'bar',
+        height: 250,
+        toolbar: { show: false }
+      },
+      series: [
+        {
+          name: 'Cantidad',
+          data: [120, 90, 60, 150]
+        }
+      ],
+      xaxis: {
+        categories: ['Útiles', 'Libros', 'Equipos', 'Otros']
+      },
+      colors: ['#198754']
+    }).render()
+    
+    /* ================= ESTADO GENERAL ================= */
+    new ApexCharts(document.querySelector('#graficaEstado'), {
+      chart: {
+        type: 'donut',
+        height: 250
+      },
+      series: [70, 20, 10],
+      labels: ['Correcto', 'Pendiente', 'Crítico'],
+      colors: ['#198754', '#ffc107', '#dc3545'],
+      legend: { position: 'bottom' }
+    }).render()
+  </script>
+{% endblock %}

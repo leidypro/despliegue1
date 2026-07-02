@@ -1,0 +1,187 @@
+
+{% extends 'list_generic.html' %}
+{% load static %}
+{% block titulo %}
+  {{ titulo }}
+{% endblock %}
+
+{% block subtitulo %}
+  {{ subtitulo }}
+{% endblock %}
+
+
+{% block columns %}
+  <th>
+    <i class="fas fa-hashtag me-2"></i>ID
+  </th>
+  <th>
+    <i class="fas fa-user me-2"></i>Nombre del Usuario
+  </th>
+  <th>
+    <i class="fas fa-envelope me-2"></i>Email
+  </th>
+  <th class="text-center">
+    <i class="fas fa-user-shield me-2"></i>Role
+  </th>
+  <th class="text-center">
+    <i class="fa-regular fa-file-image"></i>Img
+  </th>
+  <th class="text-center">
+    <i class="fas fa-tools me-2"></i>Acciones
+  </th>
+{% endblock %}
+      {% block exportar %}
+      <a href="#" class="btn-pdf" id="ExportarPdf">
+        <i class="fas fa-file-pdf me-1"></i>
+          Descargar PDF
+      </a>
+      <a href="#" class="btn-excel" id = "ExportarExcel">
+        <i class="fas fa-file-excel me-1"></i>
+          Descargar Excel
+      </a>
+        <div class="filtros" style="z-index: 1000;">
+        <input type="text" id="buscar" name="buscar" placeholder="Buscar usuario">
+
+        <select id="rol" name="rol">
+            <option value="">Todos los roles</option>
+            <option value="administrador">Administrador</option>
+            <option value="docente">Docente</option>
+            <option value="estudiante">Estudiante</option>
+        </select>
+
+        <select id="estado" name="estado">
+            <option value="">Todos</option>
+            <option value="1">Activo</option>
+            <option value="0">Inactivo</option>
+        </select>
+
+        <button type="submit" id="filtrar">
+            Filtrar
+        </button>
+    </div>
+      {% endblock %}
+{% block rows %}
+  {% for usuario in object_list %}
+    <tr>
+      <td>{{ usuario.id }}</td>
+      <td>{{ usuario.nombre }}</td>
+      <td>{{ usuario.email }}</td>
+      <td class="text-center">{{ usuario.get_rol }}</td>
+      {% if usuario.img_usuario %}
+      <td class="text-center"><img src="{{ usuario.img_usuario.url }}" alt="" width="100px" style="border-radius: 15px;"></td>
+      {% else %}
+      <td class="text-center"><img src="{% static 'img/User.jpg' %}" alt="" width="100px" style="border-radius: 15px;"></td>
+      {% endif %}
+      <td class="text-center">
+        <button class="btn btn-sm btn-info btn-ver-usuario" data-url="{% url 'app:detalle_usuario' usuario.id %}">Ver</button>
+        <a href="{% url 'app:editar_usuario' usuario.id %}" class="btn btn-sm me-1" style="background-color: #3054f7; color: #ffffff; border-radius: 8px;"><i class="fa-solid fa-pen-to-square"></i></a>
+        <a href="{% url 'app:eliminar_usuario' usuario.id %}" class="btn btn-sm" style="background-color: #ff4d4d; color: white; border-radius: 8px;"><i class="fa-solid fa-trash"></i></a>
+      </td>
+    </tr>
+  {% endfor %}
+{% endblock %}
+{% block js %}
+<script>
+  document.querySelectorAll('.btn-ver-usuario').forEach(btn => {
+
+  btn.addEventListener('click', () => {
+    const url = btn.dataset.url;
+
+    Swal.fire({
+      title: 'Cargando...',
+      allowOutsideClick: false,
+      onBeforeOpen: () => Swal.showLoading()
+    });
+
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        Swal.fire({
+          title: data.nombre,
+          icon: 'info',
+          html: `
+            <div class="text-start mt-2">
+              <div class="mb-2">
+                <span class="fw-semibold text-muted">Email</span><br>
+                <span>${data.email}</span>
+              </div>
+
+              <div class="mb-2">
+                <span class="fw-semibold text-muted">Rol</span><br>
+                <span class="badge bg-primary">${data.rol}</span>
+              </div>
+
+              <div class="mb-2">
+                <span class="fw-semibold text-muted">Estado</span><br>
+                <span class="badge bg-${data.estado === 'activo' ? 'success' : 'secondary'}">
+                  ${data.estado}
+                </span>
+              </div>
+
+              <div>
+                <span class="fw-semibold text-muted">Fecha de creación</span><br>
+                <span>${new Date(data.fecha_creacion).toLocaleString('es-CO')}</span>
+              </div>
+            </div>
+          `,
+          showConfirmButton: true,
+          confirmButtonText: 'Cerrar',
+          customClass: {
+            popup: 'swal-card',
+            title: 'swal-title',
+            confirmButton: 'btn btn-primary px-4'
+          },
+          buttonsStyling: false
+        });
+      })
+      .catch(() => {
+        Swal.fire('Error', 'No se pudo cargar la información', 'error');
+      });
+  });
+
+  });
+</script>
+<script>
+  console.log("Hola mundo")
+  $(document).ready(function () {
+
+      const tabla = $('#Tabla').DataTable();
+
+      document.getElementById('filtrar').addEventListener('click', function () {
+
+          let buscar = document.getElementById('buscar').value
+          let rol = document.getElementById('rol').value
+          let estado = document.getElementById('estado').value
+          console.log(rol)
+          tabla.search(buscar).draw()
+          tabla.column(3).search(rol);
+      });
+
+  });
+</script>
+<script>
+
+    const urlPdf = "{% url 'app:reporte_usuario_pdf' %}"
+    const urlExcel = "{% url 'app:reporte_usuario_excel' %}"
+
+    document.getElementById("ExportarPdf").addEventListener("click", function(e){
+        e.preventDefault()
+        let buscar = document.getElementById("buscar").value
+        let rol = document.getElementById("rol").value
+        let estado = document.getElementById("estado").value
+        window.location.href = `${urlPdf}?buscar=${buscar}&rol=${rol}&estado=${estado}`
+    })
+
+    document.getElementById("ExportarExcel").addEventListener("click", function(e){
+        e.preventDefault()
+        let buscar = document.getElementById("buscar").value
+        let rol = document.getElementById("rol").value
+        let estado = document.getElementById("estado").value
+        window.location.href = `${urlExcel}?buscar=${buscar}&rol=${rol}&estado=${estado}`
+    })
+
+</script>
+
+{% endblock %}
+
+

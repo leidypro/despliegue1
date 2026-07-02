@@ -1,0 +1,34 @@
+{% extends 'list_generic.html' %}
+
+{% block titulo %}
+{{titulo}}
+{% endblock titulo %}
+
+{% block subtitulo %}
+{{subtitulo}}
+{% endblock subtitulo%}
+
+{% block columns %}
+    <th><i class="fas fa-hashtag me-2"></i>ID</th>
+    <th><i class="fas fa-book me-2"></i>Titulo</th>
+    <th><i class="fas fa-clock me-2"></i>Mensaje</th>
+    <th class="text-center"><i class="fas fa-tools me-2"></i>Acciones</th>
+{% endblock columns %}
+
+{% block rows %}
+    {% for notificacion in object_list %}
+    <tr>
+        <td>{{ notificacion.id }}</td>
+        <td>{{ notificacion.titulo }}</td>
+        <td>{{ notificacion.mensaje }}</td>
+        <td class="text-center">
+            <a href="{% url 'app:editar_notificacion' notificacion.id %}" class="btn btn-sm me-1" style="background-color: #3054f7; color: #ffffff; border-radius: 8px;">
+                            <i class="fa-solid fa-pen-to-square"></i>
+            </a>
+            <a href="{% url 'app:eliminar_notificacion' notificacion.id %}" class="btn btn-sm" style="background-color: #ff4d4d; color: white; border-radius: 8px;">
+                            <i class="fa-solid fa-trash"></i>
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+{% endblock rows %}

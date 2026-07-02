@@ -1,0 +1,12 @@
+{% extends "create_generic.html" %}
+{% load static %}
+{% block titulo %}
+Crear Evento
+{% endblock titulo %}
+
+{% block url %}
+{{ listar_url }}
+{% endblock url %}
+{% block js %}
+<script src = "{% static 'Js/validaciones.js' %}"></script>
+{% endblock js %}

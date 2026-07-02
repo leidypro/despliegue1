@@ -1,0 +1,87 @@
+{% extends 'list_generic.html' %}
+{% load static %}
+
+{% block titulo %}
+  {{ titulo }}
+  <link rel="stylesheet" href="{% static 'css/reportes.css' %}">
+{% endblock %}
+
+{% block exportar %}
+<div class="contenedor-exportar d-flex align-items-center gap-2">
+    
+    <div class="dropdown">
+        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="botonSelector" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="border-radius: 8px; min-width: 200px;">
+            <i class="fas fa-graduation-cap me-1"></i> <span id="textoSeleccionado">Seleccionar Curso</span>
+        </button>
+        <div class="dropdown-menu shadow" aria-labelledby="botonSelector">
+            <a class="dropdown-item" href="#" onclick="cambiarCurso('', 'Todos los Cursos')"><strong>--- Todos los Cursos ---</strong></a>
+            {% for curso in object_list %}
+                <a class="dropdown-item" href="#" onclick="cambiarCurso('{{ curso.id }}', '{{ curso.get_grado_display }} - {{ curso.codigo }}')">
+                    {{ curso.get_grado_display }} - {{ curso.codigo }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="d-flex gap-2">
+        <a href="{% url 'app:exportar_cursos' %}" id="linkPDF" class="btn-pdf">
+            <i class="fas fa-file-pdf me-1"></i> PDF
+        </a>
+        <a href="{% url 'app:exportar_cursos_excel' %}" id="linkExcel" class="btn-excel">
+            <i class="fas fa-file-excel me-1"></i> Excel
+        </a>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script>
+    function cambiarCurso(id, nombre) {
+        // 1. Cambiamos el texto del botón para que el usuario vea qué eligió
+        document.getElementById('textoSeleccionado').innerText = nombre;
+
+        // 2. Obtenemos las URLs base de los botones
+        let urlPDF = "{% url 'app:exportar_cursos' %}";
+        let urlExcel = "{% url 'app:exportar_cursos_excel' %}";
+
+        // 3. Si hay un ID seleccionado, le agregamos el filtro a la URL
+        if (id !== '') {
+            urlPDF += "?curso_id=" + id;
+            urlExcel += "?curso_id=" + id;
+        }
+
+        // 4. Actualizamos los enlaces de los botones
+        document.getElementById('linkPDF').setAttribute('href', urlPDF);
+        document.getElementById('linkExcel').setAttribute('href', urlExcel);
+    }
+</script>
+{% endblock %}
+{% block subtitulo %}
+    <span>{{ subtitulo }}</span>
+{% endblock %}
+
+{% block columns %}
+  <th>
+    <i class="fas fa-hashtag me-2"></i>ID
+  </th>
+  <th>
+    <i class="fas fa-book me-2"></i>Nombre del Curso
+  </th>
+  <th>
+    <i class="fas fa-chalkboard-teacher me-2"></i>Nombre Docente
+  </th> <th class="text-center">
+    <i class="fas fa-tools me-2"></i>Acciones
+  </th>
+{% endblock %}
+
+{% block rows %}
+  {% for curso in object_list %}
+    <tr>
+      <td>{{ curso.id }}</td>
+      <td>{{ curso.get_grado_display }}</td> <td>{{ curso.docenteid }}</td>
+      <td class="text-center">
+        <a href="{% url 'app:editar_curso' curso.id %}" class="btn btn-sm me-1" style="background-color: #3054f7; color: #ffffff; border-radius: 8px;"><i class="fa-solid fa-pen-to-square"></i></a>
+        <a href="{% url 'app:eliminar_curso' curso.id %}" class="btn btn-sm" style="background-color: #ff4d4d; color: white; border-radius: 8px;"><i class="fa-solid fa-trash"></i></a>
+      </td>
+    </tr>
+  {% endfor %}
+{% endblock %}
